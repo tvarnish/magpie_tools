@@ -185,13 +185,15 @@ class DMFromArray(DataMap):
 
 
 class NeLMap(DataMap):
-    def __init__(self, filename, scale, multiply_by=1, flip_lr=False, rot_angle=None):
+    def __init__(self, filename, scale, multiply_by=1, flip_lr=False, flip_ud=False, rot_angle=None):
         self.fn=filename[:8]
         d=np.loadtxt(open(filename,"r"),delimiter=",")
         d=d-np.nan_to_num(d).min()
         d=np.nan_to_num(d)
         if flip_lr is True:
             d=np.fliplr(d)
+        if flip_ud is True:
+            d=np.flipud(d)
         if rot_angle is not None:
             d=rotate(d, rot_angle, resize=True)
         self.data=d*multiply_by
@@ -280,24 +282,26 @@ class NeLMap(DataMap):
 
 
 class Interferogram(DataMap):
-    def __init__(self, filename, scale, flip_lr=False, rot_angle=None):
+    def __init__(self, filename, scale, flip_lr=False, flip_ud=False, rot_angle=None):
         self.fn=filename[:8]
         d=plt.imread(filename)
         if flip_lr is True:
             d=np.fliplr(d)
+        if flip_ud is True:
+            d=np.flipud(d)
         if rot_angle is not None:
             d=rotate(d, rot_angle, resize=True)
         self.data=d
         self.scale=scale
-    def plot_data_px(self, ax=None):
+    def plot_data_px(self, ax=None, cmap=None):
         if ax is None:
             fig, ax=plt.subplots(figsize=(12,8))
-        return ax.imshow(self.data)
-    def plot_data_mm(self, ax=None):
+        return ax.imshow(self.data, cmap=cmap)
+    def plot_data_mm(self, ax=None, cmap=None):
         if ax is None:
             fig, ax=plt.subplots(figsize=(12,8))
         d=self.data_c
-        return ax.imshow(d, interpolation='none', extent=self.extent, aspect=1)
+        return ax.imshow(d, interpolation='none', extent=self.extent, aspect=1, cmap=cmap)
 
 class Shadowgram(DataMap):
     def __init__(self, filename, scale, flip_lr=False, rot_angle=None, channel = 1, wl = None):

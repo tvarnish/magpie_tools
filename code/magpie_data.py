@@ -52,10 +52,12 @@ class DataMap:
         self.origin_crop=(extent[1]*self.scale,-extent[2]*self.scale)
         self.data_c=self.data[ymin:ymax, xmin:xmax]
         self.extent=extent[2:4]+extent[0:2]
-    def plot_data_mm(self, clim=None, multiply_by=1, ax=None):
+    def plot_data_mm(self, clim=None, multiply_by=1, ax=None, fliplr=False):
         if ax is None:
             fig, ax=plt.subplots(figsize=(8,8))
         d=self.data_c*multiply_by
+        if fliplr:
+            d=np.fliplr(d)
         return ax.imshow(d, cmap=self.cmap, interpolation='none', clim=clim, extent=self.extent, aspect=1)
     def create_lineout(self, start=(0,0), end=(0,0), lineout_width_mm=1, verbose=False):
         '''

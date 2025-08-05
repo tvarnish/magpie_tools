@@ -200,7 +200,7 @@ class Fibre:
 
 
 class TS_Analysis:
-    def __init__(self, folder, shot, backgrounds, calibration=False, skip_footer=0):
+    def __init__(self, folder, shot, backgrounds, calibration=False, skip_footer=0, delimiter = "\t"):
         '''
         Loads .asc files.
         shot should be the path to a single.asc
@@ -212,19 +212,19 @@ class TS_Analysis:
         ts_dir=os.getcwd()
         os.chdir(folder)
         self.s_name=os.path.basename(shot)[:8]
-        data=np.genfromtxt(open(shot,"rb"),delimiter="\t", skip_footer=skip_footer)
+        data=np.genfromtxt(open(shot,"rb"),delimiter=delimiter, skip_footer=skip_footer)
         self.shot=np.rot90(data[:,1:-1]) #shot data
         self.x_axis=data[:,0]#x_axis, either pixel number or wavelength scale
         #Create an empty array to load multiple backgrounds into
         self.background=np.zeros((self.shot.shape))
         #load multiple backgrounds and sum them together
         for b in backgrounds:
-            data=np.genfromtxt(open(b,"rb"),delimiter="\t", skip_footer=skip_footer)
+            data=np.genfromtxt(open(b,"rb"),delimiter=delimiter, skip_footer=skip_footer)
             bkgd=np.rot90(data[:,1:-1])
             self.background+=bkgd
         #If a file is provided with a seperate calibration, use that calibration
         if calibration:
-            data=np.genfromtxt(open(calibration,"rb"),delimiter="\t")
+            data=np.genfromtxt(open(calibration,"rb"),delimiter=delimiter)
             self.x_axis=data[:,0]
         try:
             self.n_e=np.genfromtxt(self.s_name+' n_e at fibres.txt', delimiter=',', usecols=[1])
